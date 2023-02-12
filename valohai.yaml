@@ -1,0 +1,73 @@
+- step:
+    name: fit_model
+    command:
+      - pip install -r requirements.txt
+      - python fit_model.py {parameters}
+    parameters:
+      - name: training_data
+        type: string
+        default: data/train.csv
+      - name: x_column
+        type: string
+        default: text
+      - name: y_column
+        type: string
+        default: target
+    image: python:3.11.2-bullseye
+
+- step:
+    name: evaluate
+    command:
+      - pip install -r requirements.txt
+      - python evaluate.py {parameters}
+    parameters:
+      - name: validation_data
+        type: string
+        default: data/train.csv
+      - name: x_column
+        type: string
+        default: text
+      - name: y_column
+        type: string
+        default: target
+      - name: cv_folds
+        type: integer
+        default: 3
+      - name: score
+        type: string
+        default: f1
+    image: python:3.11.2-bullseye
+
+- step:
+    name: batch_score
+    command:
+      - pip install -r requirements.txt
+      - python batch_score.py {parameters}
+    parameters:
+      - name: input_dataset
+        type: string
+        default: data/test.csv
+      - name: output_dataset
+        type: string
+        default: batch_predictions.csv
+      - name: x_column
+        type: string
+        default: text
+    image: python:3.11.2-bullseye
+    inputs:
+      - name: model
+
+- pipeline:
+    name: run_all
+    nodes:
+      - name: evaluate
+        type: execution
+        step: evaluate
+      - name: fit_model
+        type: execution
+        step: fit_model
+      - name: batch_score
+        type: execution
+        step: batch_score
+    edges:
+      - [fit_model.output.model*, batch_score.input.model]
