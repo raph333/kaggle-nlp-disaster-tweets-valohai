@@ -1,13 +1,13 @@
 import argparse
 import pickle
 import pandas as pd
+import uuid
 import valohai
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Add model-prediction to dataset.')
     parser.add_argument('--input_dataset', nargs='?', default='data/test.csv')
-    parser.add_argument('--output_dataset', nargs='?', default='batch_prediction.csv')
     parser.add_argument('--x_column', nargs='?', default='text',
                         help='name of the text-column in the csv-file')
 
@@ -18,4 +18,5 @@ if __name__ == '__main__':
 
     df = pd.read_csv(valohai.parameters('input_dataset').value)
     df['prediction'] = model.predict(df[arguments.x_column])
-    df.to_csv(arguments.output_dataset, index=False)
+    output_path = valohai.outputs('model').path(f'predictions-{uuid.uuid4()}.csv')
+    df.to_csv(output_path, index=False)

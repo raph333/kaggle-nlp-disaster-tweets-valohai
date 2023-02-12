@@ -47,9 +47,6 @@
       - name: input_dataset
         type: string
         default: data/test.csv
-      - name: output_dataset
-        type: string
-        default: batch_predictions.csv
       - name: x_column
         type: string
         default: text
