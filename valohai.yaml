@@ -44,7 +44,7 @@
       - pip install -r requirements.txt
       - python batch_score.py {parameters}
     parameters:
-      - name: input_dataset
+      - name: data
         type: string
         default: data/test.csv
       - name: x_column
